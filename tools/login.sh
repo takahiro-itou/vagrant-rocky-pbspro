@@ -5,6 +5,6 @@ vagrant_dir="${script_dir}/../vagrant"
 
 pushd "${vagrant_dir}"
 
-vagrant ssh
+vagrant ssh node00
 
 popd
