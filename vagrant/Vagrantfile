@@ -2,7 +2,7 @@
 ##  vi: set ft=ruby
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "takahiro-itou/ubuntu-jammy64-docker"
+  config.vm.box = "takahiro-itou/rocky9-pbspro-23.06.06"
 
   config.vm.provider "virtualbox" do |v|
     v.name   = "vagrant-ubuntu-docker"
