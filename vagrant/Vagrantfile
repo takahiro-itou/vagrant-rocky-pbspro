@@ -1,0 +1,47 @@
+##  -*-  coding: utf-8; mode: ruby -*-  ##
+##  vi: set ft=ruby
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "takahiro-itou/rocky9-pbspro-23.06.06"
+
+  format_private_name = "node%02d"
+  format_private_ip = "192.168.64.%d"
+
+  (0..1).each  do  |i|
+    ip   = format_private_ip % [100 + i]
+    name = format_private_name % [i]
+
+    config.vm.define  name  do  |node|
+      node.vm.hostname = name
+
+      if (i == 0)
+        node.vm.network(:forwarded_port, guest: 22, host: 21022, id: "ssh")
+        node.vm.network("private_network", ip: "192.168.33.110")
+      end
+      node.vm.network("private_network", ip: ip,
+                      virtualbox__intnet: "vmnet")
+
+      node.vm.provider  "virtualbox"  do  |v|
+        v.name   = "%s-rocky-pbspro" % name
+        v.memory = "2048"
+
+        v.gui    = false
+        v.customize [
+          "modifyvm",               :id,
+          "--cableconnected1",      "on",
+          "--hwvirtex",             "on",
+          "--nestedpaging",         "on",
+          "--largepages",           "on",
+          "--ioapic",               "on",
+          "--pae",                  "on",
+          "--paravirtprovider",     "kvm",
+        ]
+      end
+
+      node.vm.boot_timeout = 900
+      node.vm.synced_folder(".", "/vagrant", disabled: true)
+
+    end
+  end
+
+end
